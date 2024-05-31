@@ -19,3 +19,11 @@ To add Perlin noise animation to the CirclePacking class, I've incorporate the n
 4. Call the **‘updatePoints’** method within the **‘draw’** method to animate the circles.
 
 ![Group E Representation of Art work](readmeImages/first_commit.png)
+
+**Second commit**
+
+Modified to keep the circles still but animating the waves within the circles and adding randomness to the size, scale and numbers of star vertices.
+
+1. **'updatePoints()'** is added to update the positions and sizes of the points using Perlin noise, creating a smooth animation effect:
+![Group E Representation of Art work](readmeImages/second_commit.png)
+
