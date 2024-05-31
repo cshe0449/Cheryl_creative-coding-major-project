@@ -27,3 +27,10 @@ Modified to keep the circles still but animating the waves within the circles an
 1. **'updatePoints()'** is added to update the positions and sizes of the points using Perlin noise, creating a smooth animation effect:
 ![Group E Representation of Art work](readmeImages/second_commit.png)
 
+
+**Third commit**
+
+Add Perlin Noise to small circles in the background for floating effect and smooth movements.
+
+![Group E Representation of Art work](readmeImages/third_commit.png)
+

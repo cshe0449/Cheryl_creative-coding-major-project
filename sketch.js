@@ -8,12 +8,13 @@ class CirclePacking {
     this.w = w; // Width of the area
     this.h = h; // Height of the area
     this.points = []; // Array to store circle points
+    this.time = 0; // Initialise time variable for animation
     this.generatePoints(); // Generate the initial points for circles
   }
 
   // Generate non-overlapping points for circles within the specified area
   generatePoints() {
-    let count = int(this.w * this.h); // Number of points based on the area size
+    let count = int(this.w * this.h / 200); // Increase the number of points
 
     for (let i = 0; i < count; i++) {
       let z = random(15, 300); // Random diameter between 15 and 300
@@ -34,23 +35,37 @@ class CirclePacking {
     }
   }
 
+  // Update vertices periodically using Perlin noise for smaller circles
+  updateVertices() {
+    this.time += 0.01; // Increment time for animation
+    for (let i = 0; i < this.points.length; i++) {
+      let p = this.points[i];
+      if (p.z < 100) { // Apply noise only to smaller circles
+        let noiseFactor = 0.1;
+        p.x += map(noise(this.time + i * noiseFactor), 0, 1, -1, 1);
+        p.y += map(noise(this.time + i * noiseFactor + 1000), 0, 1, -1, 1);
+      }
+    }
+  }
+
   // Draw the circles and shapes within them
   draw() {
+    this.updateVertices(); // Update vertices periodically
     for (let i = 0; i < this.points.length; i++) {
       let p = this.points[i];
       noFill(); // Ensure no fill for the shapes
       noStroke(); // Ensure no stroke for the shapes
       fill(random(colors)); // Random colour for each shape
 
-      if (p.z < 30) {
+      if (p.z < 100) {
         // Draw a simple circle if the size is small
         circle(p.x, p.y, p.z);
       } else {
         // Draw more complex shapes for larger circles
         let tt = int(random(30, 40)); // Number of layers for larger circles
-        let rgn = int(map(sin(frameCount * 0.0005 + i), -1, 1, 20, 67)); // Animated number of vertices
+        let rgn = int(map(sin(this.time + i * 0.1), -1, 1, 20, 67)); // Animated number of vertices
         for (let j = 0; j < tt; j++) {
-          let mn = map(j, 0, tt, 1, 0.05); // Scale factor for star vertices
+          let mn = map(j, 0, tt, 1, 0.5); // Scale factor for star vertices
           let dd = map(j, 0, tt, p.z, 0); // Diameter reduction per layer
           fill(random(colors)); // Random colour for each layer
           this.form(p.x, p.y, dd, rgn, mn); // Draw the shape
@@ -65,14 +80,14 @@ class CirclePacking {
     translate(x, y); // Move to the centre of the shape
     beginShape(); // Start defining the shape
     for (let i = 0; i < num; i++) {
-      let a = map(i, 2, num - 1, 0, PI * 2); // Angle for each vertex
+      let a = map(i, 0, num - 1, 0, PI * 2); // Angle for each vertex
       let r = d * 0.5; // Radius of the shape
       if (i % 2 == 0) r *= mn; // Scale every other vertex
       let vx = r * cos(a); // X-coordinate of vertex
       let vy = r * sin(a); // Y-coordinate of vertex
       vertex(vx, vy); // Add vertex to shape
     }
-    endShape(); // Finish defining the shape
+    endShape(CLOSE); // Finish defining the shape
     pop();
   }
 }
