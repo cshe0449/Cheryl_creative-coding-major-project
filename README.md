@@ -7,3 +7,15 @@ Chosen Art work - Wheels of fortune by Pacita Abad
 
 **Group Representation of the "Wheels of furtune"**
 ![Group E Representation of Art work](readmeImages/GroupE_Representation.jpeg)
+
+## Part 2 Individual Task
+**First commit**
+
+To add Perlin noise animation to the CirclePacking class, I've incorporate the noise function to animate the positions or sizes of the circles over time. 
+
+1. Add a time variable to the CirclePacking class to control the noise function.
+2. Modify the **‘generatePoints’** method to store initial positions and sizes.
+3. Create a new method **‘updatePoints’** to update positions and sizes using Perlin noise.
+4. Call the **‘updatePoints’** method within the **‘draw’** method to animate the circles.
+
+![Group E Representation of Art work](readmeImages/first_commit.png)

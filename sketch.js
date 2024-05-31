@@ -1,27 +1,23 @@
 let colors = ['#e6302b', '#fd7800', '#fbd400', '#3bd89f', '#0045e8', '#f477c3', '#70499c', '#006494', '#1b98e0'];
 
 class CirclePacking {
-  // Constructor to initialize the CirclePacking instance.
   constructor(x, y, w, h) {
-    this.x = x; // Center x-coordinate.
-    this.y = y; // Center y-coordinate.
-    this.w = w; // Width of the area.
-    this.h = h; // Height of the area.
-    this.points = []; // Array to store circles.
-    this.generatePoints(); // Generate circles.
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.points = [];
+    this.time = 0; // Initialize time variable
+    this.generatePoints();
   }
 
-  // Generate non-overlapping points for circles within the given area.
   generatePoints() {
-    let count = int(this.w * this.h); // Number of points based on area.
-
+    let count = int(this.w * this.h);
     for (let i = 0; i < count; i++) {
-      let z = random(15, 300); // Random diameter between 15 and 300.
-      let x = this.x + random(-this.w / 2 + z / 2, this.w / 2 - z / 2); // Random x position within bounds.
-      let y = this.y + random(-this.h / 2 + z / 2, this.h / 2 - z / 2); // Random y position within bounds.
-      let add = true; // Flag to check if circle can be added.
-
-      // Check for overlap with existing circles.
+      let z = random(15, 300);
+      let x = this.x + random(-this.w / 2 + z / 2, this.w / 2 - z / 2);
+      let y = this.y + random(-this.h / 2 + z / 2, this.h / 2 - z / 2);
+      let add = true;
       for (let j = 0; j < this.points.length; j++) {
         let p = this.points[j];
         if (dist(x, y, p.x, p.y) < (z + p.z) * 0.5) {
@@ -29,47 +25,54 @@ class CirclePacking {
           break;
         }
       }
-
-      if (add) this.points.push(createVector(x, y, z)); // Add circle if no overlap.
+      if (add) this.points.push(createVector(x, y, z));
     }
   }
 
-  // Draw the circles and shapes within them.
+  updatePoints() {
+    this.time += 0.01; // Increment time
+    for (let i = 0; i < this.points.length; i++) {
+      let p = this.points[i];
+      let noiseFactor = 0.1; // Adjust the noise factor for desired effect
+      p.x += map(noise(this.time + i * noiseFactor), 0, 1, -1, 1);
+      p.y += map(noise(this.time + i * noiseFactor + 1000), 0, 1, -1, 1); // Offset added to vary noise for x and y
+      p.z += map(noise(this.time + i * noiseFactor + 2000), 0, 1, -1, 1); // Offset added to vary noise for size
+    }
+  }
+
   draw() {
+    this.updatePoints(); // Update points before drawing
     for (let i = 0; i < this.points.length; i++) {
       let p = this.points[i];
       noFill();
       noStroke();
-      fill(random(colors)); // Random color for each shape.
-
+      fill(random(colors));
       if (p.z < 30) {
-        circle(p.x, p.y, p.z); // Draw simple circle if small.
+        circle(p.x, p.y, p.z);
       } else {
-        let tt = int(random(30, 40)); // Number of layers for larger circles.
-        let rgn = 67; // Number of vertices for star-like shape.
+        let tt = int(random(30, 40));
+        let rgn = 67;
         for (let j = 0; j < tt; j++) {
-          let mn = map(j, 0, tt, 1, 0.5); // Scale factor for star vertices.
-          let dd = map(j, 0, tt, p.z, 0); // Diameter reduction per layer.
-          fill(random(colors)); // Random color for each layer.
-          this.form(p.x, p.y, dd, rgn, mn); // Draw the shape.
+          let mn = map(j, 0, tt, 1, 0.5);
+          let dd = map(j, 0, tt, p.z, 0);
+          fill(random(colors));
+          this.form(p.x, p.y, dd, rgn, mn);
         }
       }
     }
   }
 
-
-  // Create a star-like shape.
   form(x, y, d, num, mn) {
     push();
-    translate(x, y); // Move to the center of the shape.
+    translate(x, y);
     beginShape();
     for (let i = 0; i < num; i++) {
-      let a = map(i, 0, num - 1, 0, PI * 2); // Angle for each vertex.
-      let r = d * 0.5; // Radius of the shape.
-      if (i % 2 == 0) r *= mn; // Scale every other vertex.
-      let vx = r * cos(a); // X-coordinate of vertex.
-      let vy = r * sin(a); // Y-coordinate of vertex.
-      vertex(vx, vy); // Add vertex to shape.
+      let a = map(i, 0, num - 1, 0, PI * 2);
+      let r = d * 0.5;
+      if (i % 2 == 0) r *= mn;
+      let vx = r * cos(a);
+      let vy = r * sin(a);
+      vertex(vx, vy);
     }
     endShape();
     pop();
@@ -77,13 +80,12 @@ class CirclePacking {
 }
 
 function setup() {
-  createCanvas(740, 740); // Set up canvas size.
-  rectMode(CENTER); // Set rectangle mode to center.
+  createCanvas(740, 740);
+  rectMode(CENTER);
+  cp = new CirclePacking(width / 2, height / 2, width, height); // Store CirclePacking instance globally
 }
 
 function draw() {
-  background('#014b70'); // Set background color.
-  let cp = new CirclePacking(width / 2, height / 2, width, height); // Create CirclePacking instance.
-  cp.draw(); // Draw the circles and shapes.
-  noLoop(); // Stop draw loop for static image.
+  background('#014b70');
+  cp.draw(); // Draw the circles and shapes with animation
 }
